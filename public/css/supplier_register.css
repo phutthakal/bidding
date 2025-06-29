@@ -1,0 +1,75 @@
+/* Reset default margins and paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #ecf0f1;
+    padding: 40px;
+    text-align: center;
+    margin: 0;
+}
+
+/* Form container */
+form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    display: block;
+    margin-top: 40px; /* เพิ่มระยะห่างด้านบนให้กับฟอร์ม */
+}
+
+/* Form input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    display: block;
+}
+
+/* Button styling */
+button {
+    padding: 12px 24px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    display: block;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Error and success messages */
+p#error {
+    color: red;
+}
+
+p#success {
+    color: green;
+}
+
+/* Labels for input fields */
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    text-align: left;
+}
