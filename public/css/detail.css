@@ -1,0 +1,193 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 0 20px 30px;
+}
+
+/* Navbar */
+/* Navbar */
+.navbar {
+  background-color: #FFF;
+  display: flex;
+  align-items: center;
+  height: 80px;
+  padding: 0 20px;
+}
+
+.navbar-logo {
+  height: 100%;
+  flex: 0 0 auto;
+}
+
+.navbar-logo img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  margin-left: auto;
+}
+
+.navbar-item {
+  margin-left: 20px;
+}
+
+.navbar-link {
+  display: block;
+  color: black;
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 30px 30px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.navbar-link:hover {
+  background-color: #2980b9;
+}
+
+/* Item Title */
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+/* Images */
+.item-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.item-image {
+    width: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.item-image:hover {
+    transform: scale(1.05);
+}
+
+/* Item Description */
+.item-description {
+    max-width: 800px;
+    /* margin: 0 auto 30px auto; */
+    font-size: 1.2rem;
+    line-height: 1.6;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Info Paragraphs */
+p {
+    max-width: 800px;
+    margin: 10px auto;
+    font-size: 1.2rem;
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Highlight Strong text */
+p strong {
+    color: #2c3e50;
+}
+
+/* Bid Form */
+form {
+    max-width: 600px;
+    margin: 30px auto;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input[type="number"] {
+    flex: 1;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #1e8449;
+}
+
+/* Error Message */
+p[style*="color:red"] {
+    color: red !important;
+    font-weight: bold;
+}
+
+.item-current-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e67e22;
+    /* สีส้มเด่น */
+    margin-bottom: 15px;
+    transition: color 0.3s;
+}
+
+/* เมื่อราคามีการอัปเดต ให้เปลี่ยนสีชั่วคราว */
+.item-current-price.updated {
+    color: #27ae60;
+    /* สีเขียวเวลามีอัปเดต */
+}
+
+.bid-result {
+    max-width: 600px;       /* กว้างเท่าฟอร์ม */
+    margin: 15px auto;      /* จัดตรงกลาง */
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  
+  .bid-result.success {
+    background-color: #d4edda; /* เขียวอ่อน */
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .bid-result.error {
+    background-color: #f8d7da; /* แดงอ่อน */
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  

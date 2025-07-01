@@ -79,6 +79,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "กรุณากรอกข้อมูลให้ครบ";
     }
 }
+
+function formatThaiDateSimple($datetime)
+{
+    if (!$datetime) return '-';
+    $timestamp = strtotime($datetime);
+    if (!$timestamp) return '-';
+    $thai_months = [
+        '',
+        'ม.ค.',
+        'ก.พ.',
+        'มี.ค.',
+        'เม.ย.',
+        'พ.ค.',
+        'มิ.ย.',
+        'ก.ค.',
+        'ส.ค.',
+        'ก.ย.',
+        'ต.ค.',
+        'พ.ย.',
+        'ธ.ค.'
+    ];
+    $day = date('j', $timestamp);
+    $month = $thai_months[(int)date('n', $timestamp)];
+    $year = date('Y', $timestamp);
+    $time = date('H:i', $timestamp);
+    return "$day $month $year $time น.";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -86,11 +114,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <head>
     <meta charset="UTF-8">
-    <title>ลงของประมูล</title>
+    <title>ลงประมูล</title>
     <link rel="stylesheet" href="css/create_item.css">
 </head>
 
 <body>
+    
+    <!-- เมนูบาร์ -->
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="index.php"><img src="../img/Dai-ichi-Packaging (1).png" alt="Logo"></a>
+        </div>
+        <ul class="navbar-menu">
+            <li class="navbar-item"><a class="navbar-link" href="index.php">หน้าแรก</a></li>
+            <!-- <li class="navbar-item"><a class="navbar-link" href="supplier_register.php">สมัครสมาชิก</a></li> -->
+            <li class="navbar-item"><a class="navbar-link" href="items.php">ดูรายการประมูล</a></li>
+            <?php if ($isLoggedIn): ?>
+                <?php if ($user['role'] === 'admin' || $user['role'] === 'buyer'): ?>
+                    <li class="navbar-item"><a class="navbar-link" href="create_item.php">ลงข้อมูลการประมูล</a></li>
+                    <li class="navbar-item"><a class="navbar-link" href="dashboard.php">แดชบอร์ด</a></li>
+                <?php endif; ?>
+                <li class="navbar-item"><a class="navbar-link" href="logout.php">ออกจากระบบ</a></li>
+            <?php else: ?>
+                <li class="navbar-item"><a class="navbar-link" href="contact.php">ติดต่อเรา</a></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
 
     <h2>ลงของประมูล</h2>
 
@@ -110,8 +159,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="price">ราคาเริ่มต้น:</label>
         <input type="number" name="price" id="price" min="1" required>
 
-        <label for="minimum_bid">ราคาขั้นต่ำ:</label>
-        <input type="number" name="minimum_bid" id="minimum_bid" min="1" required>
+        <!-- <label for="minimum_bid">ราคาขั้นต่ำ:</label>
+        <input type="number" name="minimum_bid" id="minimum_bid" min="1" required> -->
 
         <label for="bidding_start">เวลาเริ่มต้นการประมูล:</label>
         <input type="datetime-local" name="bidding_start" id="bidding_start" required>
@@ -131,6 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div id="preview"></div><br>
 
         <button type="submit">สร้างรายการ</button>
+
     </form>
 </body>
 
