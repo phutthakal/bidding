@@ -10,9 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = $_POST['password'] ?? '';
   $company = $_POST['company'] ?? '';
   $phone = $_POST['phone'] ?? '';
-  $role = 'seller';
+  $role = $_POST['role'] ?? '';
+  // $role = 'seller';
 
-  if ($first_name && $last_name && $email && $password && $company) {
+  if ($first_name && $last_name && $email && $password && $company && $role) {
     // ตรวจอีเมลซ้ำ
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
     $stmt->execute([$email]);
@@ -59,6 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <h2>สมัครสมาชิกสำหรับผู้ขาย (Supplier)</h2>
 
+  <?php if ($error): ?>
+    <p class="error"><?= htmlspecialchars($error) ?></p>
+  <?php elseif ($success): ?>
+    <p class="success"><?= htmlspecialchars($success) ?></p>
+  <?php endif; ?>
+
   <form method="POST" action="">
     <label for="first_name">FullName:</label>
     <input type="text" name="first_name" placeholder="ชื่อจริง" required><br>
@@ -72,8 +79,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="text" name="company" placeholder="ชื่อบริษัท" required><br>
     <label for="first_name">Phone:</label>
     <input type="text" name="phone" placeholder="เบอร์โทรศัพท์"><br>
+    <label for="role">Role:</label>
+    <select name="role" id="role" required>
+      <option value="">-- Role --</option>
+      <option value="seller">Seller</option>
+      <option value="buyer">Buyer</option>
+      <option value="admin">Admin</option>
+    </select><br>
+
     <button type="submit">สมัครสมาชิก</button>
   </form>
+
 
 </body>
 

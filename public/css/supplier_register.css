@@ -27,6 +27,25 @@ form {
     margin-top: 20px; /* เพิ่มระยะห่างด้านบนให้กับฟอร์ม */
 }
 
+form select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: white;
+  appearance: none;         /* ตัดสไตล์ default บาง browser */
+  -webkit-appearance: none; /* สำหรับ Safari */
+  -moz-appearance: none;    /* สำหรับ Firefox */
+}
+
+form select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+  outline: none;
+}
+
 /* Form input fields */
 input[type="text"],
 input[type="email"],
@@ -79,47 +98,3 @@ h2{
   font-size: 2rem;
   color: #2c3e50;
 }
-
-/* Navbar
-.navbar {
-    background-color: #FFF;
-    display: flex;
-    align-items: center;
-    height: 80px;
-    padding: 20px 20px;
-  }
-  
-  .navbar-logo {
-    height: 100%;
-    flex: 0 0 auto;
-  }
-  
-  .navbar-logo img {
-    height: 100%;
-    width: auto;
-    object-fit: contain;
-  }
-  
-  .navbar-menu {
-    display: flex;
-    list-style: none;
-    margin-left: auto;
-  }
-  
-  .navbar-item {
-    margin-left: 20px;
-  }
-  
-  .navbar-link {
-    display: block;
-    color: black;
-    text-decoration: none;
-    font-size: 1rem;
-    padding: 30px 30px;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-  }
-  
-  .navbar-link:hover {
-    background-color: #2980b9;
-  } */

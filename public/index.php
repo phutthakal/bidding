@@ -58,7 +58,7 @@ $user = $_SESSION['user'] ?? null;
   <!-- ฟุตเตอร์ -->
   <footer class="main-footer">
     <hr>
-    <small class="footer-text">&copy; <?= date('Y'); ?> ระบบประมูล | พัฒนาโดยทีมคุณ 💻</small>
+    <small class="footer-text">&copy; <?= date('Y'); ?> ระบบประมูล | พัฒนาโดยทีม IT 💻</small>
   </footer>
 
 </body>
