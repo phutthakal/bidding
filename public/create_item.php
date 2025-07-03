@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $unit = htmlspecialchars(trim($_POST['unit'] ?? ''));
     $price = $_POST['price'] ?? 0;
     $seller_id = $_SESSION['user']['id'];
+    $auction_room = $_POST['auction_room'] ?? null;
+
 
     $image_urls = [];
 
@@ -58,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($title && $description && $bidding_start && $bidding_end && $unit) {
         // บันทึกรายการประมูลลงในฐานข้อมูล
         $stmt = $pdo->prepare("INSERT INTO items 
-    (seller_id, title, description, image_url, bidding_start, bidding_end, price, minimum_bid, quantity, unit) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    (seller_id, title, description, image_url, bidding_start, bidding_end, price, minimum_bid, quantity, unit, auction_room) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         // แปลง array ของ URL รูปภาพเป็น string ด้วย comma
         $image_urls_string = implode(',', $image_urls);
@@ -99,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="css/create_item.css">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    
+
 </head>
 
 <body>
@@ -147,8 +149,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="unit">หน่วยสินค้า:</label>
         <input type="text" name="unit" id="unit" placeholder="เช่น ชิ้น, กล่อง" required>
 
+        <label>ห้องประมูล:</label>
+        <input type="text" name="auction_room" placeholder="เช่น ROOM2024-001" required>
+
         <label>รูปสินค้า (เลือกหลายรูปได้):</label><br>
-        <input type="file" name="images[]" id="image-input" accept="image/*" multiple required><br><br>
+        <input type="file" name="images[]" id="image-input" accept="image/*" multiple><br><br>
 
         <div id="preview"></div><br>
 

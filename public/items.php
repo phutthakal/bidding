@@ -17,8 +17,11 @@ $updateStmt = $pdo->prepare("UPDATE items SET status = 'closed' WHERE bidding_en
 $updateStmt->execute();
 
 $stmt = $pdo->query("
-    SELECT *, bidding_start, bidding_end FROM items
-WHERE NOW() BETWEEN bidding_start AND bidding_end AND status='open'
+    SELECT *
+FROM items
+WHERE /*NOW() BETWEEN bidding_start AND bidding_end*/
+   status='open'
+  AND DATE(bidding_start) = CURDATE()
 ");
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -39,34 +42,7 @@ if (isset($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_
     }
 }
 
-// function formatThaiDateTime($datetime)
-// {
-//     $months = [
-//         '',
-//         'ม.ค.',
-//         'ก.พ.',
-//         'มี.ค.',
-//         'เม.ย.',
-//         'พ.ค.',
-//         'มิ.ย.',
-//         'ก.ค.',
-//         'ส.ค.',
-//         'ก.ย.',
-//         'ต.ค.',
-//         'พ.ย.',
-//         'ธ.ค.'
-//     ];
-//     $date = new DateTime($datetime);
-//     $day = $date->format('j');
-//     $month = $months[(int)$date->format('n')];
-//     $year = $date->format('Y');
-//     $time = $date->format('H:i');
-//     return "$day $month $year $time น.";
-// }
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="th">
 
@@ -132,8 +108,8 @@ if (isset($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_
                             <p class="item-detail"><strong>จำนวนสินค้า:</strong> <?= $item['quantity'] ?> <?= $item['unit'] ?></p>
                             <!-- <p class="item-detail"><strong>เวลาเริ่มต้นการประมูล:</strong> <?= $item['bidding_start'] ?></p>
                         <p class="item-detail"><strong>เวลาเสร็จสิ้นการประมูล:</strong> <?= $item['bidding_end'] ?></p> -->
-                            <p class="item-detail"><strong>เวลาเริ่มต้นการประมูล:</strong> <?= $date_start->format('d-m-Y H:i') ?></p>
-                            <p class="item-detail"><strong>เวลาเสร็จสิ้นการประมูล:</strong> <?= $date_end->format('d-m-Y H:i') ?></p>
+                            <p class="item-detail"><strong>เริ่มต้น:</strong> <?= $date_start->format('d-m-Y H:i') ?></p>
+                            <p class="item-detail"><strong>เสร็จสิ้น:</strong> <?= $date_end->format('d-m-Y H:i') ?></p>
 
                         </div>
 
