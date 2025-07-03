@@ -9,7 +9,7 @@
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #ecf0f1;
-    padding: 40px;
+    /* padding: 40px; */
     text-align: center;
     margin: 0;
 }
@@ -24,7 +24,7 @@ form {
     max-width: 500px;
     margin: 0 auto;
     display: block;
-    margin-top: 40px; /* เพิ่มระยะห่างด้านบนให้กับฟอร์ม */
+    margin-top: 20px; /* เพิ่มระยะห่างด้านบนให้กับฟอร์ม */
 }
 
 /* Form input fields */
@@ -73,3 +73,53 @@ label {
     font-size: 1rem;
     text-align: left;
 }
+
+h2{
+  padding-top: 30px;
+  font-size: 2rem;
+  color: #2c3e50;
+}
+
+/* Navbar
+.navbar {
+    background-color: #FFF;
+    display: flex;
+    align-items: center;
+    height: 80px;
+    padding: 20px 20px;
+  }
+  
+  .navbar-logo {
+    height: 100%;
+    flex: 0 0 auto;
+  }
+  
+  .navbar-logo img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+  
+  .navbar-menu {
+    display: flex;
+    list-style: none;
+    margin-left: auto;
+  }
+  
+  .navbar-item {
+    margin-left: 20px;
+  }
+  
+  .navbar-link {
+    display: block;
+    color: black;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 30px 30px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+  }
+  
+  .navbar-link:hover {
+    background-color: #2980b9;
+  } */

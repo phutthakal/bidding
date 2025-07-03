@@ -16,10 +16,28 @@ $open = $stmt->fetch(PDO::FETCH_ASSOC);
 $stmt = $pdo->query("SELECT COUNT(*) AS closed_count FROM items WHERE status='closed'");
 $closed = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$where = "";
+$params = [];
+
+if (!empty($_GET['start_date']) && !empty($_GET['end_date'])) {
+  $where = " AND DATE(items.bidding_end) BETWEEN :start AND :end";
+  $params['start'] = $_GET['start_date'];
+  $params['end'] = $_GET['end_date'];
+}
+
 // รายการปิด + ผู้ชนะ
-$stmt = $pdo->query("
+$stmt = $pdo->prepare("
     SELECT
-  items.*,
+  items.id,
+  items.title AS NameProduct,
+  items.description,
+  items.image_url,
+  items.price,
+  items.update_price,
+  items.quantity,
+  items.unit,
+  items.bidding_start,
+  items.bidding_end,
   CONCAT(buyer.first_name, ' ', buyer.last_name) AS buyer_name,
   buyer.email AS buyer_email,
   buyer.role AS buyer_role,
@@ -34,9 +52,10 @@ LEFT JOIN users AS buyer ON items.seller_id = buyer.id
 LEFT JOIN companies AS companies_buyer ON buyer.company_id = companies_buyer.id
 LEFT JOIN users AS winner ON items.winner_id = winner.id
 LEFT JOIN companies AS companies_winner ON winner.company_id = companies_winner.id
-WHERE items.status='closed'
-ORDER BY items.bidding_end DESC
+WHERE items.status='closed'$where
+    ORDER BY items.bidding_end DESC
 ");
+$stmt->execute($params);
 $closed_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -45,27 +64,13 @@ $closed_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
   <meta charset="UTF-8">
   <title>แดชบอร์ดประมูล</title>
-  <!-- <link rel="stylesheet" href="css/navbar.css"> -->
+  <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/dashboard.css">
 </head>
 
 <body>
 
-  <nav class="navbar">
-    <div class="navbar-logo">
-      <a href="index.php"><img src="../img/Dai-ichi-Packaging (1).png" alt="Logo"></a>
-    </div>
-    <ul class="navbar-menu">
-      <li class="navbar-item"><a class="navbar-link" href="index.php">หน้าแรก</a></li>
-      <li class="navbar-item"><a class="navbar-link" href="items.php">รายการประมูล</a></li>
-      <?php if ($_SESSION['user']['role'] === 'admin' || $_SESSION['user']['role'] === 'buyer'): ?>
-        <li class="navbar-item"><a class="navbar-link" href="create_item.php">ลงรายการประมูล</a></li>
-        <li class="navbar-item"><a class="navbar-link" href="dashboard.php">แดชบอร์ด</a></li>
-      <?php endif; ?>
-      <li class="navbar-item"><a class="navbar-link" href="logout.php">ออกจากระบบ</a></li>
-    </ul>
-  </nav>
-
+  <?php include '../ui/navbar.php'; ?>
 
   <h1>แดชบอร์ด</h1>
 
@@ -79,6 +84,15 @@ $closed_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <p><?= (int)$closed['closed_count'] ?> รายการ</p>
     </div>
   </div>
+
+  <form method="GET" class="dashboard-filter">
+    <label>เริ่มวันที่: <input type="date" name="start_date" value="<?= htmlspecialchars($_GET['start_date'] ?? '') ?>"></label>
+    <label>ถึงวันที่: <input type="date" name="end_date" value="<?= htmlspecialchars($_GET['end_date'] ?? '') ?>"></label>
+    <button type="submit">ค้นหา</button>
+    <?php if (!empty($_GET['start_date']) && !empty($_GET['end_date'])): ?>
+      <a href="export_winners.php?start_date=<?= urlencode($_GET['start_date']) ?>&end_date=<?= urlencode($_GET['end_date']) ?>" class="export-button">📥 ดาวน์โหลด Excel</a>
+    <?php endif; ?>
+  </form>
 
   <h2>รายการที่ปิดแล้ว</h2>
   <table>
@@ -94,7 +108,7 @@ $closed_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <tbody>
       <?php foreach ($closed_items as $item): ?>
         <tr>
-          <td><?= htmlspecialchars($item['title']) ?></td>
+          <td><?= htmlspecialchars($item['NameProduct']) ?></td>
           <td><?= number_format($item['update_price']) ?> บาท</td>
           <td><?= $item['winner_name'] ? htmlspecialchars($item['winner_name']) : 'ไม่มีผู้ชนะ' ?></td>
           <td><?= $item['winner_email'] ? htmlspecialchars($item['winner_email']) : 'ไม่มีผู้ชนะ' ?></td>

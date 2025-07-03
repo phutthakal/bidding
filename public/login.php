@@ -5,42 +5,48 @@ require_once __DIR__ . '/../config/connect.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+  $email = $_POST['email'] ?? '';
+  $password = $_POST['password'] ?? '';
 
-    if ($email && $password) {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+  if ($email && $password) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && password_verify($password, $user['password_hash'])) {
-            // เข้าสู่ระบบสำเร็จ
-            $_SESSION['user'] = [
-                'id' => $user['id'],
-                'name' => $user['first_name'] . ' ' . $user['last_name'],
-                'role' => $user['role']
-            ];
+    if ($user && password_verify($password, $user['password_hash'])) {
+      // เข้าสู่ระบบสำเร็จ
+      $_SESSION['user'] = [
+        'id' => $user['id'],
+        'name' => $user['first_name'] . ' ' . $user['last_name'],
+        'role' => $user['role']
+      ];
 
-            // ส่งไปหน้าหลักหรือ dashboard
-            header('Location: index.php');
-            exit;
-        } else {
-            $error = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-        }
+      // ส่งไปหน้าหลักหรือ dashboard
+      header('Location: index.php');
+      exit;
     } else {
-        $error = 'กรุณากรอกอีเมลและรหัสผ่าน';
+      $error = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
     }
+  } else {
+    $error = 'กรุณากรอกอีเมลและรหัสผ่าน';
+  }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8" />
   <title>เข้าสู่ระบบ</title>
   <link rel="stylesheet" href="css/login.css" />
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
+
 <body>
+
+<?php include '../ui/navbar.php'; ?>
+
 
   <h2>เข้าสู่ระบบ</h2>
 
@@ -57,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <p id="result"></p>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
       const formData = new FormData(this);
@@ -65,7 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       const res = await fetch('/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
       });
 
@@ -85,4 +93,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </script>
 
 </body>
+
 </html>

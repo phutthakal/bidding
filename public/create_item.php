@@ -51,6 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    // แปลง datetime-local ที่ได้จาก Flatpickr เป็น MySQL datetime
+    $start_dt = DateTime::createFromFormat('Y-m-d\TH:i', $bidding_start);
+    $end_dt = DateTime::createFromFormat('Y-m-d\TH:i', $bidding_end);
+
     if ($title && $description && $bidding_start && $bidding_end && $unit) {
         // บันทึกรายการประมูลลงในฐานข้อมูล
         $stmt = $pdo->prepare("INSERT INTO items 
@@ -78,37 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $error = "กรุณากรอกข้อมูลให้ครบ";
     }
-}
+    echo '<pre>';
+    print_r($_POST);
+    echo '</pre>';
+    exit; // ให้ script หยุดทันทีหลังแสดงข้อมูล
 
-function formatThaiDateSimple($datetime)
-{
-    if (!$datetime) return '-';
-    $timestamp = strtotime($datetime);
-    if (!$timestamp) return '-';
-    $thai_months = [
-        '',
-        'ม.ค.',
-        'ก.พ.',
-        'มี.ค.',
-        'เม.ย.',
-        'พ.ค.',
-        'มิ.ย.',
-        'ก.ค.',
-        'ส.ค.',
-        'ก.ย.',
-        'ต.ค.',
-        'พ.ย.',
-        'ธ.ค.'
-    ];
-    $day = date('j', $timestamp);
-    $month = $thai_months[(int)date('n', $timestamp)];
-    $year = date('Y', $timestamp);
-    $time = date('H:i', $timestamp);
-    return "$day $month $year $time น.";
 }
 
 ?>
-
 <!DOCTYPE html>
 <html lang="th">
 
@@ -116,32 +97,16 @@ function formatThaiDateSimple($datetime)
     <meta charset="UTF-8">
     <title>ลงประมูล</title>
     <link rel="stylesheet" href="css/create_item.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
 </head>
 
 <body>
-    
-    <!-- เมนูบาร์ -->
-    <nav class="navbar">
-        <div class="navbar-logo">
-            <a href="index.php"><img src="../img/Dai-ichi-Packaging (1).png" alt="Logo"></a>
-        </div>
-        <ul class="navbar-menu">
-            <li class="navbar-item"><a class="navbar-link" href="index.php">หน้าแรก</a></li>
-            <!-- <li class="navbar-item"><a class="navbar-link" href="supplier_register.php">สมัครสมาชิก</a></li> -->
-            <li class="navbar-item"><a class="navbar-link" href="items.php">ดูรายการประมูล</a></li>
-            <?php if ($isLoggedIn): ?>
-                <?php if ($user['role'] === 'admin' || $user['role'] === 'buyer'): ?>
-                    <li class="navbar-item"><a class="navbar-link" href="create_item.php">ลงข้อมูลการประมูล</a></li>
-                    <li class="navbar-item"><a class="navbar-link" href="dashboard.php">แดชบอร์ด</a></li>
-                <?php endif; ?>
-                <li class="navbar-item"><a class="navbar-link" href="logout.php">ออกจากระบบ</a></li>
-            <?php else: ?>
-                <li class="navbar-item"><a class="navbar-link" href="contact.php">ติดต่อเรา</a></li>
-            <?php endif; ?>
-        </ul>
-    </nav>
 
-    <h2>ลงของประมูล</h2>
+    <?php include '../ui/navbar.php'; ?>
+
+    <h2>เพิ่มสินค้า</h2>
 
     <?php if ($error): ?>
         <p class="error"><?= htmlspecialchars($error) ?></p>
@@ -162,11 +127,19 @@ function formatThaiDateSimple($datetime)
         <!-- <label for="minimum_bid">ราคาขั้นต่ำ:</label>
         <input type="number" name="minimum_bid" id="minimum_bid" min="1" required> -->
 
-        <label for="bidding_start">เวลาเริ่มต้นการประมูล:</label>
-        <input type="datetime-local" name="bidding_start" id="bidding_start" required>
+        <!-- <label for="bidding_start">เวลาเริ่มต้นการประมูล:</label>
+        <input type="datetime-local" name="bidding_start" id="bidding_start" required> -->
+        <!-- <label for="formatted_date">วันที่แบบไทย:</label>
+        <input type="text" id="formatted_date" readonly> -->
+        <label>เวลาเริ่มต้นการประมูล:</label>
+        <input type="text" id="bidding_start" name="bidding_start" required>
 
-        <label for="bidding_end">เวลาเสร็จสิ้นการประมูล:</label>
-        <input type="datetime-local" name="bidding_end" id="bidding_end" required>
+        <label>เวลาสิ้นสุดการประมูล:</label>
+        <input type="text" id="bidding_end" name="bidding_end" required>
+        <!-- <label for="bidding_end">เวลาเสร็จสิ้นการประมูล:</label>
+        <input type="datetime-local" name="bidding_end" id="bidding_end" required> -->
+        <!-- <label for="formatted_date_end">วันที่แบบไทย:</label>
+        <input type="text" id="formatted_date_end" readonly> -->
 
         <label for="quantity">จำนวนสินค้า:</label>
         <input type="number" name="quantity" id="quantity" min="1" required>
@@ -185,7 +158,21 @@ function formatThaiDateSimple($datetime)
 </body>
 
 </html>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 <script>
+    flatpickr("#bidding_start", {
+        enableTime: true,
+        dateFormat: "Y-m-d\\TH:i",
+        locale: "th",
+        time_24hr: true
+    });
+    flatpickr("#bidding_end", {
+        enableTime: true,
+        dateFormat: "Y-m-d\\TH:i",
+        locale: "th",
+        time_24hr: true
+    });
     document.getElementById('image-input').addEventListener('change', function(event) {
         const preview = document.getElementById('preview');
         preview.innerHTML = ''; // ล้างพรีวิวเดิม
@@ -209,4 +196,42 @@ function formatThaiDateSimple($datetime)
             });
         }
     });
+    // document.getElementById('bidding_start').addEventListener('input', function() {
+    //     const value = this.value; // e.g. "2024-07-01T14:30"
+    //     if (!value) return;
+
+    //     // แยกวัน/เวลา
+    //     const [datePart, timePart] = value.split('T');
+    //     const [y, m, d] = datePart.split('-');
+
+    //     // แปลงเป็น d/m/Y เวลา H:i
+    //     const formatted = `${d}/${m}/${y} ${timePart}`;
+    //     document.getElementById('formatted_date').value = formatted;
+    // });
+    // document.getElementById('bidding_end').addEventListener('input', function() {
+    //     const value = this.value; // e.g. "2024-07-01T14:30"
+    //     if (!value) return;
+
+    //     // แยกวัน/เวลา
+    //     const [datePart, timePart] = value.split('T');
+    //     const [y, m, d] = datePart.split('-');
+
+    //     // แปลงเป็น d/m/Y เวลา H:i
+    //     const formatted = `${d}/${m}/${y} ${timePart}`;
+    //     document.getElementById('formatted_date_end').value = formatted;
+    // });
+    // document.getElementById('auctionForm').addEventListener('submit', function(e) {
+    //     const formatted = document.getElementById('formatted_date').value; // เช่น "01/07/2024 14:30"
+    //     const regex = /^(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})$/;
+    //     const match = formatted.match(regex);
+
+    //     if (match) {
+    //         const [, d, m, y, hh, mm] = match;
+    //         const isoDatetime = `${y}-${m}-${d}T${hh}:${mm}`; // กลับเป็น ISO
+    //         document.getElementById('bidding_start').value = isoDatetime;
+    //     } else {
+    //         alert("รูปแบบวันที่ไม่ถูกต้อง ต้องเป็น dd/mm/yyyy hh:mm");
+    //         e.preventDefault();
+    //     }
+    // });
 </script>

@@ -10,7 +10,6 @@
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f4f4f4;
-  padding: 30px;
   text-align: center;
 }
 
@@ -86,3 +85,9 @@ p.success {
   color: green;
 }
 
+h2{
+  padding-top: 30px;
+  padding-bottom: 20px;
+  font-size: 2rem;
+  color: #2c3e50;
+}

@@ -1,7 +1,7 @@
 /* Reset */
 * {
   margin: 0;
-  padding: 0;
+  /* padding: 0; */
   box-sizing: border-box;
 }
 
@@ -10,14 +10,13 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: #f0f0f0;
 }
-
 /* Navbar */
 .navbar {
   background-color: #FFF;
   display: flex;
   align-items: center;
   height: 80px;
-  padding: 0 20px;
+  padding: 20px 20px;
 }
 
 .navbar-logo {

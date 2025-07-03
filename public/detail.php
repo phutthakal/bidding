@@ -42,7 +42,6 @@ if (!$item) {
 
 $date_start = new DateTime($item['bidding_start']) ?? 'ไม่มีข้อมูล';
 $date_end = new DateTime($item['bidding_end']) ?? 'ไม่มีข้อมูล';
-
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -51,26 +50,15 @@ $date_end = new DateTime($item['bidding_end']) ?? 'ไม่มีข้อม�
     <meta charset="UTF-8">
     <title>รายละเอียด: <?= htmlspecialchars($item['title']) ?></title>
     <link rel="stylesheet" href="css/detail.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-logo">
-            <a href="index.php"><img src="../img/Dai-ichi-Packaging (1).png" alt="Logo"></a>
-        </div>
-        <ul class="navbar-menu">
-            <li class="navbar-item"><a class="navbar-link" href="index.php">หน้าแรก</a></li>
-            <li class="navbar-item"><a class="navbar-link" href="items.php">รายการประมูล</a></li>
-            <?php if ($_SESSION['user']['role'] === 'admin' || $_SESSION['user']['role'] === 'buyer'): ?>
-                <li class="navbar-item"><a class="navbar-link" href="create_item.php">ลงรายการประมูล</a></li>
-                <li class="navbar-item"><a class="navbar-link" href="dashboard.php">แดชบอร์ด</a></li>
-            <?php endif; ?>
-            <li class="navbar-item"><a class="navbar-link" href="logout.php">ออกจากระบบ</a></li>
-        </ul>
-    </nav>
+    <?php include '../ui/navbar.php'; ?>
+
 
     <h1><?= htmlspecialchars($item['title']) ?></h1>
 
@@ -83,7 +71,8 @@ $date_end = new DateTime($item['bidding_end']) ?? 'ไม่มีข้อม�
             </a>
         <?php endforeach; ?>
     </div>
-
+    <h2 class="head2h">รายละเอียด</h2>
+    <p><strong>ชื่อสินค้า:</strong> <?= htmlspecialchars($item['title']) ?></p>
     <p class="item-description"><strong>รายละเอียด: </strong><?= htmlspecialchars($item['description']) ?></p>
 
     <p><strong>ราคาเปิด:</strong> <?= number_format($item['price']) ?> บาท</p>
@@ -92,15 +81,15 @@ $date_end = new DateTime($item['bidding_end']) ?? 'ไม่มีข้อม�
         ราคาปัจจุบัน: <?= number_format($item['update_price'] ?: $item['price']) ?> บาท
     </p>
 
-    <p><strong>เวลาเริ่ม:</strong> <?= $date_start->format('d-m-Y H:i:s') ?></p>
-    <p><strong>เวลาหยุด:</strong> <?= $date_end->format('d-m-Y H:i:s') ?></p>
-
     <p><strong>จำนวนสินค้า:</strong> <?= htmlspecialchars($item['quantity']) ?> <?= htmlspecialchars($item['unit']) ?></p>
+    <p><strong>เวลาเริ่ม:</strong> <?= $date_start->format('d-m-Y H:i') ?></p>
+    <p><strong>เวลาหยุด:</strong> <?= $date_end->format('d-m-Y H:i') ?></p>
 
+
+    <h2 class="head2h">ข้อมูลผู้ชนะ</h2>
     <p><strong>ผู้เสนอราคาต่ำสุด:</strong>
         <?= $item['winner_name'] ? htmlspecialchars($item['winner_name']) : 'ยังไม่มีผู้เสนอราคา'; ?>
     </p>
-
     <p><strong>บริษัทผู้เสนอราคาต่ำสุด:</strong>
         <?= $item['company_winner'] ? htmlspecialchars($item['company_winner']) : 'ยังไม่มีบริษัท'; ?>
     </p>
@@ -108,6 +97,7 @@ $date_end = new DateTime($item['bidding_end']) ?? 'ไม่มีข้อม�
         <?= $item['winner_email'] ? htmlspecialchars($item['winner_email']) : 'ยังไม่มีอีเมล'; ?>
     </p>
 
+    <h2 class="head2h">ข้อมูลผู้เปิด</h2>
     <p><strong>ผู้เปิดประมูล: </strong><?= htmlspecialchars($item['buyer_name']) ?></p>
 
     <p><strong>บริษัทผู้เปิดประมูล: </strong><?= htmlspecialchars($item['company_buyer']) ?></p>
@@ -159,6 +149,29 @@ $date_end = new DateTime($item['bidding_end']) ?? 'ไม่มีข้อม�
                 });
             }
         });
+        // เรียลไทม์ polling อัปเดตราคาปัจจุบัน
+        const itemIds = [...document.querySelectorAll('.item-current-price')]
+            .map(el => el.id.replace('current-price-', ''));
+
+        setInterval(() => {
+            itemIds.forEach(id => {
+                fetch(`get_current_price.php?item_id=${id}&_=${Date.now()}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.current_price !== undefined) {
+                            const priceElement = document.getElementById('current-price-' + id);
+                            const newPrice = parseFloat(data.current_price).toFixed(0);
+                            if (priceElement.dataset.lastPrice !== newPrice) {
+                                priceElement.textContent = `ราคาปัจจุบัน: ${parseFloat(newPrice).toLocaleString()} บาท`;
+                                priceElement.dataset.lastPrice = newPrice;
+                                priceElement.classList.add('updated');
+                                setTimeout(() => priceElement.classList.remove('updated'), 500);
+                            }
+                        }
+                    })
+                    .catch(err => console.error('อัปเดตราคา error:', err));
+            });
+        }, 1000);
     </script>
 </body>
 

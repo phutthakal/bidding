@@ -17,10 +17,11 @@ $updateStmt = $pdo->prepare("UPDATE items SET status = 'closed' WHERE bidding_en
 $updateStmt->execute();
 
 $stmt = $pdo->query("
-    SELECT * FROM items
+    SELECT *,bidding_start,bidding_end FROM items
     WHERE DATE(NOW()) BETWEEN DATE(bidding_start) AND DATE(bidding_end)
 ");
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 
 // ตรวจสอบการอัปโหลดไฟล์ภาพ
@@ -38,30 +39,31 @@ if (isset($_FILES['image']['name']) && $_FILES['image']['error'] === UPLOAD_ERR_
     }
 }
 
-function formatThaiDateTime($datetime)
-{
-    $months = [
-        '',
-        'ม.ค.',
-        'ก.พ.',
-        'มี.ค.',
-        'เม.ย.',
-        'พ.ค.',
-        'มิ.ย.',
-        'ก.ค.',
-        'ส.ค.',
-        'ก.ย.',
-        'ต.ค.',
-        'พ.ย.',
-        'ธ.ค.'
-    ];
-    $date = new DateTime($datetime);
-    $day = $date->format('j');
-    $month = $months[(int)$date->format('n')];
-    $year = $date->format('Y');
-    $time = $date->format('H:i');
-    return "$day $month $year $time น.";
-}
+// function formatThaiDateTime($datetime)
+// {
+//     $months = [
+//         '',
+//         'ม.ค.',
+//         'ก.พ.',
+//         'มี.ค.',
+//         'เม.ย.',
+//         'พ.ค.',
+//         'มิ.ย.',
+//         'ก.ค.',
+//         'ส.ค.',
+//         'ก.ย.',
+//         'ต.ค.',
+//         'พ.ย.',
+//         'ธ.ค.'
+//     ];
+//     $date = new DateTime($datetime);
+//     $day = $date->format('j');
+//     $month = $months[(int)$date->format('n')];
+//     $year = $date->format('Y');
+//     $time = $date->format('H:i');
+//     return "$day $month $year $time น.";
+// }
+
 
 ?>
 
@@ -72,6 +74,7 @@ function formatThaiDateTime($datetime)
     <meta charset="UTF-8">
     <title>รายการประมูลที่เปิดอยู่</title>
     <link rel="stylesheet" href="css/items.css" />
+    <link rel="stylesheet" href="css/navbar.css">
     <!-- CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
 
@@ -81,26 +84,8 @@ function formatThaiDateTime($datetime)
 
 <body class="items-page">
 
-    <!-- เมนูบาร์ -->
-    <nav class="navbar">
-        <div class="navbar-logo">
-            <a href="index.php"><img src="../img/Dai-ichi-Packaging (1).png" alt="Logo"></a>
-        </div>
-        <ul class="navbar-menu">
-            <li class="navbar-item"><a class="navbar-link" href="index.php">หน้าแรก</a></li>
-            <!-- <li class="navbar-item"><a class="navbar-link" href="supplier_register.php">สมัครสมาชิก</a></li> -->
-            <li class="navbar-item"><a class="navbar-link" href="items.php">ดูรายการประมูล</a></li>
-            <?php if ($isLoggedIn): ?>
-                <?php if ($user['role'] === 'admin' || $user['role'] === 'buyer'): ?>
-                    <li class="navbar-item"><a class="navbar-link" href="create_item.php">ลงข้อมูลการประมูล</a></li>
-                    <li class="navbar-item"><a class="navbar-link" href="dashboard.php">แดชบอร์ด</a></li>
-                <?php endif; ?>
-                <li class="navbar-item"><a class="navbar-link" href="logout.php">ออกจากระบบ</a></li>
-            <?php else: ?>
-                <li class="navbar-item"><a class="navbar-link" href="contact.php">ติดต่อเรา</a></li>
-            <?php endif; ?>
-        </ul>
-    </nav>
+    <?php include '../ui/navbar.php'; ?>
+
 
     <header class="items-header">
         <h2 class="items-title">รายการประมูลที่เปิดอยู่</h2>
@@ -111,6 +96,12 @@ function formatThaiDateTime($datetime)
             <p class="no-items-message">ยังไม่มีรายการประมูลในขณะนี้</p>
         <?php else: ?>
             <?php foreach ($items as $item): ?>
+
+                <?php
+                $date_start = new DateTime($item['bidding_start']) ?? 'ไม่มีข้อมูล';
+                $date_end = new DateTime($item['bidding_end']) ?? 'ไม่มีข้อมูล';
+                ?>
+
                 <div class="item-card">
                     <h3 class="item-title"><strong>ชื่อสินค้า: </strong><?= htmlspecialchars($item['title']) ?></h3>
 
@@ -141,8 +132,8 @@ function formatThaiDateTime($datetime)
                         <p class="item-detail"><strong>จำนวนสินค้า:</strong> <?= $item['quantity'] ?> <?= $item['unit'] ?></p>
                         <!-- <p class="item-detail"><strong>เวลาเริ่มต้นการประมูล:</strong> <?= $item['bidding_start'] ?></p>
                         <p class="item-detail"><strong>เวลาเสร็จสิ้นการประมูล:</strong> <?= $item['bidding_end'] ?></p> -->
-                        <p class="item-detail"><strong>เวลาเริ่มต้นการประมูล:</strong> <?= formatThaiDateTime($item['bidding_start']) ?></p>
-                        <p class="item-detail"><strong>เวลาเสร็จสิ้นการประมูล:</strong> <?= formatThaiDateTime($item['bidding_end']) ?></p>
+                        <p class="item-detail"><strong>เวลาเริ่มต้นการประมูล:</strong> <?= $date_start->format('d-m-Y H:i') ?></p>
+                        <p class="item-detail"><strong>เวลาเสร็จสิ้นการประมูล:</strong> <?= $date_end->format('d-m-Y H:i') ?></p>
 
                     </div>
 
@@ -185,7 +176,7 @@ function formatThaiDateTime($datetime)
                             resultDiv = document.createElement('div');
                             resultDiv.classList.add('bid-result');
                             form.insertAdjacentElement('afterend', resultDiv);
-                            
+
                         }
                         resultDiv.textContent = data.success ? data.message : data.message || 'เกิดข้อผิดพลาด';
                         resultDiv.style.color = data.success ? 'green' : 'red';

@@ -13,32 +13,13 @@ $user = $_SESSION['user'] ?? null;
   <meta charset="UTF-8">
   <title>ระบบประมูลออนไลน์</title>
   <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/navbar.css">
 </head>
 
 <body>
 
-  <!-- เมนูบาร์ -->
-  <nav class="navbar">
-    <div class="navbar-logo">
-      <a href="index.php"><img src="../img/Dai-ichi-Packaging (1).png" alt="Logo"></a>
-    </div>
-    <ul class="navbar-menu">
-      <li class="navbar-item"><a class="navbar-link" href="index.php">หน้าแรก</a></li>
-      <li class="navbar-item"><a class="navbar-link" href="login.php">เข้าสู่ระบบ</a></li>
-      <?php if ($isLoggedIn): ?>
-        <?php if ($user['role'] === 'admin' || $user['role'] === 'buyer'): ?>
-          <li class="navbar-item"><a class="navbar-link" href="create_item.php">ลงข้อมูลการประมูล</a></li>
-          <li class="navbar-item"><a class="navbar-link" href="dashboard.php">แดชบอร์ด</a></li>
-        <?php endif; ?>
-        <li class="navbar-item"><a class="navbar-link" href="items.php">ดูรายการประมูล</a></li>
-        <li class="navbar-item"><a class="navbar-link" href="logout.php">ออกจากระบบ</a></li>
-        <li class="navbar-item"><a class="navbar-link" href="profiles.php">โปรไฟล์</a></li>
-      <?php else: ?>
-        <!-- <li class="navbar-item"><a class="navbar-link" href="items.php">ดูรายการประมูล</a></li> -->
-        <li class="navbar-item"><a class="navbar-link" href="https://www.dai-ichipack.com/">ติดต่อเรา</a></li>
-      <?php endif; ?>
-    </ul>
-  </nav>
+<?php include '../ui/navbar.php'; ?>
+
 
   <!-- ส่วนหัว -->
   <header class="hero">
