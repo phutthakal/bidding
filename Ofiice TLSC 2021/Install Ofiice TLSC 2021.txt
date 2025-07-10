@@ -1,0 +1,12 @@
+Microsoft Windows [Version 10.0.19045.5198]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\admin.DAI-ICHIPACK>cd...
+
+C:\Users\admin.DAI-ICHIPACK>cd..
+
+C:\Users>cd..
+
+C:\>cd C:\Ofiice TLSC 2021
+
+C:\Ofiice TLSC 2021>setup /configure configuration.xml
